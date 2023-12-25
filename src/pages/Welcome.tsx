@@ -9,6 +9,7 @@ import {
 import { UserObj, userStore } from "../stores/userStore";
 import { observer } from "mobx-react";
 import { useNavigate } from "react-router-dom";
+import { EXPLORE_LINK, LIGHT_GREY_COLOUR } from "../models/constants";
 
 const enum FormState {
   anonymous,
@@ -22,7 +23,7 @@ const Welcome = observer(() => {
 
   const handleFormClick = (newState: FormState) => {
     if (newState === FormState.anonymous) {
-      navigate("/projects");
+      navigate(EXPLORE_LINK);
     }
     setFormState(formState !== newState ? newState : FormState.anonymous);
   };
@@ -37,7 +38,7 @@ const Welcome = observer(() => {
     }
 
     if (userStore.isSignedIn) {
-      navigate("/projects");
+      navigate(EXPLORE_LINK);
     }
   };
 
@@ -75,9 +76,9 @@ const Welcome = observer(() => {
             prefix={<KeyOutlined />}
             iconRender={(visible) =>
               visible ? (
-                <EyeOutlined style={{ color: "#e3e7e0" }} />
+                <EyeOutlined style={{ color: LIGHT_GREY_COLOUR}} />
               ) : (
-                <EyeInvisibleOutlined style={{ color: "#e3e7e0" }} />
+                <EyeInvisibleOutlined style={{ color: LIGHT_GREY_COLOUR }} />
               )
             }
           />
@@ -92,7 +93,14 @@ const Welcome = observer(() => {
   };
 
   return (
-    <>
+    <div
+      style={{
+        width: "1200px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+      }}
+    >
       <div style={{ fontSize: 75 }}>
         Don't let bugs
         <br /> bug you.
@@ -131,7 +139,7 @@ const Welcome = observer(() => {
           </Button>
         </div>
       )}
-    </>
+    </div>
   );
 });
 

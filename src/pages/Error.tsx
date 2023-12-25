@@ -1,13 +1,27 @@
-import { Button, Result } from 'antd';
+import { Button, Result } from "antd";
+import { Link } from "react-router-dom";
 
-function ErrorPage() {
-    console.log("errorpage loaded")
-    return <Result
-    status="404"
-    title="404"
-    subTitle="Sorry, the page you visited does not exist."
-    extra={<Button type="primary">Back Home</Button>}
-  />
-}
+const ErrorPage = () => {
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center"
+      }}
+    >
+      <Result
+        status="404"
+        title="404"
+        subTitle="Sorry, the page you visited does not exist."
+        extra={
+          <Button>
+            <Link to="/welcome">Back Home</Link>
+          </Button>
+        }
+      />
+    </div>
+  );
+};
 
 export default ErrorPage;

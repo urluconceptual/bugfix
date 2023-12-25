@@ -11,6 +11,7 @@ import RootLayout from "./pages/Root/Root";
 import ErrorPage from "./pages/Error";
 import Profiles from "./pages/Profiles";
 import { ConfigProvider } from "antd";
+import { BLACK_COLOUR, DARK_GREY_COLOUR, EXPLORE_LINK, LIGHT_GREY_COLOUR, MY_PROFILE_LINK, NEON_GREEN_COLOUR, RED_COLOUR, TRANSPARENT_GREY_COLOUR, WELCOME_LINK } from "./models/constants";
 
 function App() {
   return (
@@ -18,41 +19,48 @@ function App() {
       theme={{
         components: {
           Layout: {
-            colorBgLayout: "#0d0d0d",
-            headerBg: "#242424",
-            colorTextHeading: "#e3e7e0",
-            colorIconHover: "#e3e7e0",
+            colorBgLayout: BLACK_COLOUR,
+            headerBg: DARK_GREY_COLOUR,
+            colorTextHeading: LIGHT_GREY_COLOUR
           },
           Menu: {
-            colorBgContainer: "#242424",
-            colorText: "#e3e7e0",
-            horizontalItemHoverColor: "#d8fe51",
-            horizontalItemSelectedColor: "#d8fe51",
+            colorBgContainer: DARK_GREY_COLOUR,
+            colorText: LIGHT_GREY_COLOUR,
+            horizontalItemHoverColor: NEON_GREEN_COLOUR,
+            horizontalItemSelectedColor: NEON_GREEN_COLOUR,
           },
           Button: {
-            colorBgContainer: "#0d0d0d",
+            colorBgContainer: BLACK_COLOUR,
           },
           Input: {
-            colorBgContainer: "#0d0d0d",
-            activeBorderColor: "#d8fe51",
-            colorTextPlaceholder: "#8b8b8d",
+            colorBgContainer: BLACK_COLOUR,
+            activeBorderColor: NEON_GREEN_COLOUR,
+            colorTextPlaceholder: TRANSPARENT_GREY_COLOUR,
+          },
+          Card: {
+            colorBgContainer: BLACK_COLOUR,
+          },
+          Pagination: {
+            colorBgContainer: BLACK_COLOUR,
+            colorPrimary: LIGHT_GREY_COLOUR
           }
         },
         token: {
           fontFamily: "Sometype Mono",
-          colorText: "#e3e7e0",
-          colorPrimaryHover: "#d8fe51",
-          colorError: "#af2821"
-        },
+          colorText: LIGHT_GREY_COLOUR,
+          colorTextDescription: LIGHT_GREY_COLOUR,
+          colorPrimaryHover: NEON_GREEN_COLOUR,
+          colorError: RED_COLOUR
+        }
       }}
     >
       <Router>
         <Routes>
           <Route path="/" element={<RootLayout />}>
-            <Route index element={<Navigate to="/welcome" replace />} />
-            <Route path="/welcome" element={<Welcome />} />
-            <Route path="/projects" element={<Projects />} />
-            <Route path="/profiles" element={<Profiles />} />
+            <Route index element={<Navigate to={WELCOME_LINK} replace />} />
+            <Route path={WELCOME_LINK} element={<Welcome />} />
+            <Route path={EXPLORE_LINK} element={<Projects />} />
+            <Route path={MY_PROFILE_LINK} element={<Profiles />} />
             <Route path="*" element={<ErrorPage />} />
           </Route>
         </Routes>
