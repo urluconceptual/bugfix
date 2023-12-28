@@ -3,6 +3,7 @@ import {
   addDoc,
   collection,
   doc,
+  getDoc,
   getDocs,
   orderBy,
   query,
@@ -45,13 +46,9 @@ export interface BugObj {
   proposedBy: string;
   description: string;
   status: BugStatus;
-}
-
-export interface Step {
-  id: string;
-  bugId: string;
-  index: number;
-  action: string;
+  stepsToReproduce: string,
+  timeProposed: FieldValue | any;
+  timeResolved: FieldValue | any;
 }
 
 class ProjectsStore {
@@ -80,7 +77,7 @@ class ProjectsStore {
 
   editInDb = (newProject: ProjectObj) => {
     const projectRef = doc(db, "projects", newProject.id!);
-    updateDoc(projectRef, {...newProject})
+    updateDoc(projectRef, { ...newProject })
       .then(() => {
         this.fetchByUser(newProject.authorId).then(() =>
           message.success("Project successfully updated!")
@@ -114,6 +111,28 @@ class ProjectsStore {
           };
         }))
     );
+  };
+
+  fetchById = async (projectId: string) => {
+    const projectRef = doc(db, "projects", projectId);
+    const docSnap = await getDoc(projectRef);
+    if (docSnap.exists()) {
+      runInAction(() => {
+        const projectData = docSnap.data();
+        this.currentViewProjects = [
+          {
+            id: docSnap.id,
+            title: projectData.title,
+            authorId: projectData.authorId,
+            githubLink: projectData.githubLink,
+            description: projectData.description,
+            timestamp: projectData.timestamp,
+          },
+        ];
+      });
+    } else {
+      console.log("Project does not exist");
+    }
   };
 
   fetchAll = async () => {

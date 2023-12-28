@@ -13,7 +13,7 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import { ProjectData } from "../../stores/projectsStore";
 import { userStore } from "../../stores/userStore";
-import EditProjectForm from "../EditProjectForm";
+import EditProjectForm from "../custom/ProjectComponents/EditProjectForm";
 
 const enum Action {
   seeCode,

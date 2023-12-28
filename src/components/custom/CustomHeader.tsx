@@ -9,8 +9,8 @@ import {
   PROFILE_LINK,
   NEON_GREEN_COLOUR,
   WELCOME_LINK,
-} from "../models/constants";
-import { userStore } from "../stores/userStore";
+} from "../../models/constants";
+import { userStore } from "../../stores/userStore";
 
 const CustomHeader = observer(() => {
   const location = useLocation();

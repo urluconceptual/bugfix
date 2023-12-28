@@ -1,47 +1,50 @@
 import { Button, Form, Input, Modal, Spin } from "antd";
 import { observer } from "mobx-react";
-import { ProjectData, ProjectObj, projectStore } from "../stores/projectsStore";
+import { ProjectObj, projectStore } from "../../../stores/projectsStore";
 import TextArea from "antd/es/input/TextArea";
 import { useState } from "react";
 import { serverTimestamp } from "firebase/firestore";
-import { EditOutlined } from "@ant-design/icons";
-import { NEON_GREEN_COLOUR } from "../models/constants";
+import { userStore } from "../../../stores/userStore";
 
-const EditProjectForm = observer(({ project }: { project: ProjectData }) => {
+const AddProjectForm = observer(({ userId }: { userId: string | undefined }) => {
   const [formLoading, setFormLoading] = useState<boolean>(false);
-  const [formIsOpen, setFormIsOpen] =
+  const [newProjectFormIsOpen, setNewProjectFormIsOpen] =
     useState<boolean>(false);
+    const isOwnProfile = userId === (userStore.currentUser? userStore.currentUser!.uid : "");
 
   const handleFinishForm = async (newProject: ProjectObj) => {
     setFormLoading(true);
+    newProject.authorId = userId!;
     newProject.timestamp = serverTimestamp();
-    await projectStore.editInDb({...project, ...newProject});
+    await projectStore.addToDb(newProject);
     setFormLoading(false);
-    setFormIsOpen(false);
+    setNewProjectFormIsOpen(false);
   };
 
   return (
     <>
-      <EditOutlined
-        onClick={() => setFormIsOpen(true)}
-        style={{ color: NEON_GREEN_COLOUR }}
-        key="reportBug"
-      />
+      {isOwnProfile && (
+        <Button
+          onClick={(e) => setNewProjectFormIsOpen((prev) => !prev)}
+          style={{ width: 200 }}
+        >
+          Add new project
+        </Button>
+      )}
       <Modal
         width="650px"
-        title="Edit Project"
-        open={formIsOpen}
-        onCancel={() => setFormIsOpen(false)}
+        title="Add New Project"
+        open={newProjectFormIsOpen}
+        onCancel={() => setNewProjectFormIsOpen(false)}
         footer={null}
       >
-        <Spin tip="Saving Project..." spinning={formLoading}>
+        <Spin tip="Adding project..." spinning={formLoading}>
           <Form
-            name="editProjectForm"
+            name="addProjectForm"
             layout="horizontal"
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 16 }}
             style={{ maxWidth: 600 }}
-            initialValues={{...project}}
             onFinish={handleFinishForm}
             autoComplete="off"
           >
@@ -106,4 +109,4 @@ const EditProjectForm = observer(({ project }: { project: ProjectData }) => {
   );
 });
 
-export default EditProjectForm;
+export default AddProjectForm;

@@ -7,7 +7,7 @@ import ProjectsList from "../components/reusable/ProjectsList";
 import { UserOutlined } from "@ant-design/icons";
 import { useParams } from "react-router-dom";
 import { User } from "firebase/auth";
-import AddProjectForm from "../components/AddProjectForm";
+import AddProjectForm from "../components/custom/ProjectComponents/AddProjectForm";
 
 const Profile = observer(() => {
   const params = useParams();

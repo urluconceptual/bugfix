@@ -2,7 +2,7 @@ import { Layout } from "antd";
 import { Content, Footer} from "antd/es/layout/layout";
 import {Outlet } from "react-router-dom";
 import { observer } from "mobx-react";
-import CustomHeader from "../../components/CustomHeader";
+import CustomHeader from "../../components/custom/CustomHeader";
 import { LIGHT_GREY_COLOUR } from "../../models/constants";
 
 import "./Root.css";

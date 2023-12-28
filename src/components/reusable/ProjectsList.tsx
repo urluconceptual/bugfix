@@ -9,7 +9,7 @@ const ProjectsList = observer(() => {
   const [dataSource, setDataSource] = useState<ProjectData[]>([]);
 
   useEffect(() => {
-    console.log(userStore.users, projectStore.currentViewProjects)
+    console.log(userStore.users, projectStore.currentViewProjects);
     if (userStore.users)
       setDataSource(
         projectStore.currentViewProjects.map((item) => {
@@ -26,9 +26,13 @@ const ProjectsList = observer(() => {
       itemLayout="vertical"
       size="large"
       dataSource={dataSource}
-      pagination={{
-        pageSize: 3,
-      }}
+      pagination={
+        dataSource.length > 1
+          ? {
+              pageSize: 3,
+            }
+          : false
+      }
       renderItem={(item: ProjectData) => (
         <List.Item key={item.id} style={{ paddingLeft: 0, paddingRight: 0 }}>
           <ProjectCard project={item} />
