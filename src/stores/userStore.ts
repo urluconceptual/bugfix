@@ -3,35 +3,73 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
+  User,
+  onAuthStateChanged,
 } from "firebase/auth";
 import { FirebaseError } from "@firebase/util";
-import { makeObservable, observable, action } from "mobx";
+import {
+  makeObservable,
+  observable,
+  action,
+  runInAction,
+  computed,
+} from "mobx";
 import { message } from "antd";
+import { collection, doc, getDocs, query, setDoc } from "firebase/firestore";
+import { db } from "..";
 
 export interface UserObj {
+  id?: string;
   email?: string;
   password?: string;
 }
 
 class UserStore {
-  isSignedIn: boolean = false;
-  currentUser: string = "";
+  users: any = null;
+  currentUser: User | null = null;
 
   constructor() {
     makeObservable(this, {
-      isSignedIn: observable,
+      isSignedIn: computed,
       signUp: action,
       logIn: action,
       logOut: action,
+      currentUser: observable,
+      users: observable,
+      setCurrentUser: action,
+      fetchAllUsers: action,
     });
   }
+
+  initializeAuthState = () => {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      this.setCurrentUser(user);
+    });
+  };
+
+  setCurrentUser = (user: User | null) => {
+    this.currentUser = user;
+  };
+
+  get isSignedIn() {
+    return this.currentUser !== null;
+  }
+
+  addToDb = (userObj: UserObj) => {
+    setDoc(doc(db, "users", userObj.id!), { email: userObj.email }).catch(
+      (err) => {
+        throw err;
+      }
+    );
+  };
 
   signUp = async (userObj: UserObj) => {
     const auth = getAuth();
     createUserWithEmailAndPassword(auth, userObj.email!, userObj.password!)
-      .then(() => {
-        this.isSignedIn = true;
-        this.currentUser = userObj.email!;
+      .then((res) => {
+        userObj.id = res.user.uid;
+        this.addToDb(userObj);
         message.success("Your account was successfully created!");
       })
       .catch((err: FirebaseError) => {
@@ -52,7 +90,6 @@ class UserStore {
     const auth = getAuth();
     signInWithEmailAndPassword(auth, userObj.email!, userObj.password!)
       .then(() => {
-        this.isSignedIn = true;
         message.success("Welcome back!");
       })
       .catch((err: FirebaseError) => {
@@ -71,12 +108,23 @@ class UserStore {
     const auth = getAuth();
     signOut(auth)
       .then(() => {
-        this.isSignedIn = false;
         message.success("Goodbye!");
       })
       .catch((error: FirebaseError) => {
         message.error("An error occurred while logging you out.");
       });
+  };
+
+  fetchAllUsers = async () => {
+    const usersRef = collection(db, "users");
+    const q = query(usersRef);
+    const res = await getDocs(q);
+    runInAction(() => {
+      this.users = {};
+      res.forEach((doc) => {
+        this.users[doc.id] = doc.data() as UserObj;
+      });
+    });
   };
 }
 

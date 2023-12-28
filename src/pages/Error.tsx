@@ -7,7 +7,7 @@ const ErrorPage = () => {
       style={{
         display: "flex",
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
       }}
     >
       <Result

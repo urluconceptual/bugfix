@@ -1,4 +1,4 @@
-import { Layout, Menu } from "antd";
+import { Layout } from "antd";
 import { Content, Footer} from "antd/es/layout/layout";
 import {Outlet } from "react-router-dom";
 import { observer } from "mobx-react";
