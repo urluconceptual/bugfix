@@ -1,6 +1,10 @@
 import { Button, Form, Input, Modal, Spin } from "antd";
 import { observer } from "mobx-react";
-import { ProjectData, ProjectObj, projectStore } from "../../../stores/projectsStore";
+import {
+  ProjectData,
+  ProjectObj,
+  projectStore,
+} from "../../../stores/projectsStore";
 import TextArea from "antd/es/input/TextArea";
 import { useState } from "react";
 import { serverTimestamp } from "firebase/firestore";
@@ -9,24 +13,22 @@ import { NEON_GREEN_COLOUR } from "../../../models/constants";
 
 const EditProjectForm = observer(({ project }: { project: ProjectData }) => {
   const [formLoading, setFormLoading] = useState<boolean>(false);
-  const [formIsOpen, setFormIsOpen] =
-    useState<boolean>(false);
+  const [formIsOpen, setFormIsOpen] = useState<boolean>(false);
 
   const handleFinishForm = async (newProject: ProjectObj) => {
     setFormLoading(true);
     newProject.timestamp = serverTimestamp();
-    await projectStore.editInDb({...project, ...newProject});
+    await projectStore.editInDb({ ...project, ...newProject });
     setFormLoading(false);
     setFormIsOpen(false);
   };
 
   return (
     <>
-      <EditOutlined
-        onClick={() => setFormIsOpen(true)}
-        style={{ color: NEON_GREEN_COLOUR }}
-        key="reportBug"
-      />
+      <span onClick={() => setFormIsOpen(true)}>
+        <EditOutlined style={{ color: NEON_GREEN_COLOUR }} key="reportBug" />{" "}
+        Edit project
+      </span>
       <Modal
         width="650px"
         title="Edit Project"
@@ -41,7 +43,7 @@ const EditProjectForm = observer(({ project }: { project: ProjectData }) => {
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 16 }}
             style={{ maxWidth: 600 }}
-            initialValues={{...project}}
+            initialValues={{ ...project }}
             onFinish={handleFinishForm}
             autoComplete="off"
           >

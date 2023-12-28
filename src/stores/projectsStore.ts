@@ -41,11 +41,11 @@ export interface ProjectData {
 }
 
 export interface BugObj {
-  id: string;
-  projectId: string;
-  proposedBy: string;
+  id?: string;
+  projectId?: string;
+  proposedBy?: string;
   description: string;
-  status: BugStatus;
+  status?: BugStatus;
   stepsToReproduce: string,
   timeProposed: FieldValue | any;
   timeResolved: FieldValue | any;

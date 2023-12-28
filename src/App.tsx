@@ -46,7 +46,7 @@ function App() {
             horizontalItemSelectedColor: NEON_GREEN_COLOUR,
           },
           Button: {
-            colorBgContainer: BLACK_COLOUR,
+            colorBgContainer: BLACK_COLOUR
           },
           Input: {
             colorBgContainer: BLACK_COLOUR,

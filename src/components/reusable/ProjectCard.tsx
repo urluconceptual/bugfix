@@ -4,6 +4,7 @@ import {
   CodeOutlined,
   EyeOutlined,
   BugOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import {
   EXPLORE_LINK,
@@ -14,11 +15,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ProjectData } from "../../stores/projectsStore";
 import { userStore } from "../../stores/userStore";
 import EditProjectForm from "../custom/ProjectComponents/EditProjectForm";
+import AddBugForm from "../custom/BugComponents/AddBugForm";
 
 const enum Action {
   seeCode,
   seeProject,
-  reportBug
+  reportBug,
+  seeAuthor,
 }
 
 const ProjectCard = observer(({ project }: { project: ProjectData }) => {
@@ -33,6 +36,9 @@ const ProjectCard = observer(({ project }: { project: ProjectData }) => {
       case Action.seeProject:
         navigate(`${EXPLORE_LINK}/${project.id}`);
         break;
+      case Action.seeAuthor:
+        navigate(`${PROFILE_LINK}/${project.authorId}`);
+        break;
       case Action.reportBug:
         break;
     }
@@ -40,25 +46,27 @@ const ProjectCard = observer(({ project }: { project: ProjectData }) => {
 
   const getAvailableActions = () => {
     let actions = [
-      <CodeOutlined
-        onClick={() => handleAction(Action.seeCode, project)}
-        style={{ color: NEON_GREEN_COLOUR }}
-        key="seeCode"
-      />,
-      <BugOutlined
-        onClick={() => handleAction(Action.seeCode, project)}
-        style={{ color: NEON_GREEN_COLOUR }}
-        key="reportBug"
-      />,
+      <span onClick={() => handleAction(Action.seeCode, project)}>
+        <CodeOutlined style={{ color: NEON_GREEN_COLOUR }} key="seeCode" />{" "}
+        See repository
+      </span>,
+      <AddBugForm project={project}/>,
     ];
+
+    if (location.pathname === `${EXPLORE_LINK}`)
+      actions = actions.concat([
+        <span onClick={() => handleAction(Action.seeAuthor, project)}>
+          <UserOutlined style={{ color: NEON_GREEN_COLOUR }} key="seeAuthor" />{" "}
+          Author profile
+        </span>,
+      ]);
 
     if (location.pathname !== `${EXPLORE_LINK}/${project.id}`)
       actions = actions.concat([
-        <EyeOutlined
-          onClick={() => handleAction(Action.seeProject, project)}
-          style={{ color: NEON_GREEN_COLOUR }}
-          key="seeProject"
-        />,
+        <span onClick={() => handleAction(Action.seeProject, project)}>
+          <EyeOutlined style={{ color: NEON_GREEN_COLOUR }} key="seeProject" />{" "}
+          See project
+        </span>,
       ]);
 
     if (
@@ -66,9 +74,7 @@ const ProjectCard = observer(({ project }: { project: ProjectData }) => {
         (userStore.currentUser ? userStore.currentUser!.uid : "") &&
       location.pathname === `${PROFILE_LINK}/${project.authorId}`
     )
-      actions = actions.concat([
-        <EditProjectForm project={project} />
-      ]);
+      actions = actions.concat([<EditProjectForm project={project} />]);
     return actions;
   };
 
