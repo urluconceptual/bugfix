@@ -27,6 +27,16 @@ export interface ProjectObj {
   timestamp: FieldValue | any;
 }
 
+export interface ProjectData {
+  id?: string;
+  title: string | any;
+  authorId: string | any;
+  githubLink: string | any;
+  description: string | any;
+  timestamp: FieldValue | any;
+  authorEmail: string;
+}
+
 export interface BugObj {
   id: string;
   projectId: string;

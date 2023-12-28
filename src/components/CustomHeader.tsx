@@ -56,7 +56,9 @@ const CustomHeader = observer(() => {
           </Menu.Item>
           {userStore.isSignedIn && (
             <Menu.Item key={`${PROFILE_LINK}/${userStore.currentUser?.uid}`}>
-              <Link to={`${PROFILE_LINK}/${userStore.currentUser?.uid}`}>My Profile</Link>
+              <Link to={`${PROFILE_LINK}/${userStore.currentUser?.uid}`}>
+                My Profile
+              </Link>
             </Menu.Item>
           )}
         </Menu>
