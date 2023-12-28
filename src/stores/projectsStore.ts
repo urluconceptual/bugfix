@@ -2,9 +2,11 @@ import {
   FieldValue,
   addDoc,
   collection,
+  doc,
   getDocs,
   orderBy,
   query,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { makeObservable, observable, action } from "mobx";
@@ -76,6 +78,20 @@ class ProjectsStore {
       });
   };
 
+  editInDb = (newProject: ProjectObj) => {
+    const projectRef = doc(db, "projects", newProject.id!);
+    updateDoc(projectRef, {...newProject})
+      .then(() => {
+        this.fetchByUser(newProject.authorId).then(() =>
+          message.success("Project successfully updated!")
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+        message.error("An error occurred while updating the project.");
+      });
+  };
+
   fetchByUser = async (authorId: string) => {
     const projectsRef = collection(db, "projects");
     const q = query(
@@ -102,10 +118,7 @@ class ProjectsStore {
 
   fetchAll = async () => {
     const projectsRef = collection(db, "projects");
-    const q = query(
-      projectsRef,
-      orderBy("timestamp", "desc")
-    );
+    const q = query(projectsRef, orderBy("timestamp", "desc"));
     const res = await getDocs(q);
     runInAction(
       () =>

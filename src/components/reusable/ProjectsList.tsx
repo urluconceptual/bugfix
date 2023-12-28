@@ -9,6 +9,7 @@ const ProjectsList = observer(() => {
   const [dataSource, setDataSource] = useState<ProjectData[]>([]);
 
   useEffect(() => {
+    console.log(userStore.users, projectStore.currentViewProjects)
     if (userStore.users)
       setDataSource(
         projectStore.currentViewProjects.map((item) => {

@@ -4,7 +4,6 @@ import {
   CodeOutlined,
   EyeOutlined,
   BugOutlined,
-  EditOutlined,
 } from "@ant-design/icons";
 import {
   EXPLORE_LINK,
@@ -14,12 +13,12 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import { ProjectData } from "../../stores/projectsStore";
 import { userStore } from "../../stores/userStore";
+import EditProjectForm from "../EditProjectForm";
 
 const enum Action {
   seeCode,
   seeProject,
-  reportBug,
-  editProject,
+  reportBug
 }
 
 const ProjectCard = observer(({ project }: { project: ProjectData }) => {
@@ -68,11 +67,7 @@ const ProjectCard = observer(({ project }: { project: ProjectData }) => {
       location.pathname === `${PROFILE_LINK}/${project.authorId}`
     )
       actions = actions.concat([
-        <EditOutlined
-          onClick={() => handleAction(Action.editProject, project)}
-          style={{ color: NEON_GREEN_COLOUR }}
-          key="reportBug"
-        />,
+        <EditProjectForm project={project} />
       ]);
     return actions;
   };
