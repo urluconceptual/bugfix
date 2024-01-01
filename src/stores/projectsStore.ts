@@ -14,12 +14,7 @@ import { makeObservable, observable, action } from "mobx";
 import { db } from "..";
 import { message } from "antd";
 import { runInAction } from "mobx";
-
-export enum BugStatus {
-  Proposed,
-  Active,
-  Resolved,
-}
+import { UserObj } from "./userStore";
 
 export interface ProjectObj {
   id?: string;
@@ -30,29 +25,12 @@ export interface ProjectObj {
   timestamp: FieldValue | any;
 }
 
-export interface ProjectData {
-  id?: string;
-  title: string | any;
-  authorId: string | any;
-  githubLink: string | any;
-  description: string | any;
-  timestamp: FieldValue | any;
+export interface ProjectData extends ProjectObj {
   authorEmail: string;
 }
 
-export interface BugObj {
-  id?: string;
-  projectId?: string;
-  proposedBy?: string;
-  description: string;
-  status?: BugStatus;
-  stepsToReproduce: string,
-  timeProposed: FieldValue | any;
-  timeResolved: FieldValue | any;
-}
-
 class ProjectsStore {
-  currentViewProjects: ProjectObj[] = [];
+  currentViewProjects: ProjectData[] = [];
 
   constructor() {
     makeObservable(this, {
@@ -97,17 +75,17 @@ class ProjectsStore {
       orderBy("timestamp", "desc")
     );
     const res = await getDocs(q);
+    const projectRef = doc(db, "users", authorId);
+    const userSnap = await getDoc(projectRef);
+    const userData = userSnap.data() as UserObj;
     runInAction(
       () =>
         (this.currentViewProjects = res.docs.map((doc) => {
-          const projectData = doc.data();
+          const projectData = doc.data() as ProjectObj;
           return {
             id: doc.id,
-            title: projectData.title,
-            authorId: projectData.authorId,
-            githubLink: projectData.githubLink,
-            description: projectData.description,
-            timestamp: projectData.timestamp,
+            ...projectData,
+            authorEmail: userData.email!
           };
         }))
     );
@@ -117,16 +95,17 @@ class ProjectsStore {
     const projectRef = doc(db, "projects", projectId);
     const docSnap = await getDoc(projectRef);
     if (docSnap.exists()) {
+      const projectData = docSnap.data() as ProjectObj;
+      const userRef = doc(db, "users", projectData.authorId);
+      const userSnap = await getDoc(userRef);
+      const userData = userSnap.data() as UserObj;
       runInAction(() => {
-        const projectData = docSnap.data();
+        
         this.currentViewProjects = [
           {
             id: docSnap.id,
-            title: projectData.title,
-            authorId: projectData.authorId,
-            githubLink: projectData.githubLink,
-            description: projectData.description,
-            timestamp: projectData.timestamp,
+            ...projectData,
+            authorEmail: userData.email!,
           },
         ];
       });
@@ -139,20 +118,23 @@ class ProjectsStore {
     const projectsRef = collection(db, "projects");
     const q = query(projectsRef, orderBy("timestamp", "desc"));
     const res = await getDocs(q);
-    runInAction(
-      () =>
-        (this.currentViewProjects = res.docs.map((doc) => {
-          const projectData = doc.data();
-          return {
-            id: doc.id,
-            title: projectData.title,
-            authorId: projectData.authorId,
-            githubLink: projectData.githubLink,
-            description: projectData.description,
-            timestamp: projectData.timestamp,
-          };
-        }))
-    );
+    const projectPromises = res.docs.map(async (docSnap) => {
+      const projectData = docSnap.data() as ProjectObj;
+      const userRef = doc(db, "users", projectData.authorId);
+      const userSnapshot = await getDoc(userRef);
+      const userData = userSnapshot.data() as UserObj;
+      return {
+        id: docSnap.id,
+        ...projectData,
+        authorEmail: userData.email!
+      };
+    });
+  
+    const projects = await Promise.all(projectPromises);
+  
+    runInAction(() => {
+      this.currentViewProjects = projects;
+    });
   };
 }
 

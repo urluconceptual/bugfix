@@ -15,7 +15,7 @@ import {
   computed,
 } from "mobx";
 import { message } from "antd";
-import { collection, doc, getDocs, query, setDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, setDoc } from "firebase/firestore";
 import { db } from "..";
 
 export interface UserObj {
@@ -125,6 +125,12 @@ class UserStore {
         this.users[doc.id] = doc.data() as UserObj;
       });
     });
+  };
+
+  fetchById = async (userId : string) => {
+    const projectRef = doc(db, "users", userId);
+    const docSnap = await getDoc(projectRef);
+    return docSnap.exists()? docSnap.data() as UserObj : null;
   };
 }
 

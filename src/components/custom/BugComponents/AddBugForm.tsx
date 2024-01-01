@@ -1,10 +1,7 @@
 import { Button, Form, Input, Modal, Spin } from "antd";
 import { observer } from "mobx-react";
 import {
-  BugObj,
   ProjectData,
-  ProjectObj,
-  projectStore,
 } from "../../../stores/projectsStore";
 import { useState } from "react";
 import { serverTimestamp } from "firebase/firestore";
@@ -14,15 +11,24 @@ import {
   MinusCircleOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
+import { userStore } from "../../../stores/userStore";
+import { BugObj, BugStatus, bugsStore } from "../../../stores/bugStore";
 
 const AddBugForm = observer(({ project }: { project: ProjectData }) => {
+  const [form] = Form.useForm();
   const [formLoading, setFormLoading] = useState<boolean>(false);
   const [formIsOpen, setFormIsOpen] = useState<boolean>(false);
 
   const handleFinishForm = async (newBug: BugObj) => {
     setFormLoading(true);
-    console.log(newBug)
+    newBug.projectId = project.id;
+    newBug.proposedBy = userStore.currentUser? userStore.currentUser.uid : null;
+    newBug.timeProposed = serverTimestamp();
+    newBug.status = BugStatus.Proposed;
+    bugsStore.addToDb(newBug);
+    setFormLoading(false);
     setFormIsOpen(false);
+    form.resetFields();
   };
 
   return (
@@ -40,6 +46,7 @@ const AddBugForm = observer(({ project }: { project: ProjectData }) => {
       >
         <Spin tip="Saving bug..." spinning={formLoading}>
           <Form
+          form={form}
             name="addBugForm"
             layout="horizontal"
             labelCol={{ span: 8 }}
@@ -64,7 +71,7 @@ const AddBugForm = observer(({ project }: { project: ProjectData }) => {
               />
             </Form.Item>
             <Form.List
-              name="steps"
+              name="stepsToReproduce"
               rules={[
                 {
                   validator: async (_, names) => {

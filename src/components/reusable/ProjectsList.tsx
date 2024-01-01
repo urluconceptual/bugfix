@@ -1,7 +1,6 @@
 import { List } from "antd";
 import { observer } from "mobx-react";
 import { ProjectData, projectStore } from "../../stores/projectsStore";
-import { userStore } from "../../stores/userStore";
 import { useEffect, useState } from "react";
 import ProjectCard from "./ProjectCard";
 
@@ -9,16 +8,8 @@ const ProjectsList = observer(() => {
   const [dataSource, setDataSource] = useState<ProjectData[]>([]);
 
   useEffect(() => {
-    if (userStore.users)
-      setDataSource(
-        projectStore.currentViewProjects.map((item) => {
-          return {
-            ...item,
-            authorEmail: userStore.users[item.authorId]["email"],
-          };
-        })
-      );
-  }, [userStore.users, projectStore.currentViewProjects]);
+    setDataSource(projectStore.currentViewProjects);
+  }, [projectStore.currentViewProjects]);
 
   return (
     <List

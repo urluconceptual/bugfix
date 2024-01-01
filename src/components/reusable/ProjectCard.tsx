@@ -3,7 +3,6 @@ import { observer } from "mobx-react";
 import {
   CodeOutlined,
   EyeOutlined,
-  BugOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import {

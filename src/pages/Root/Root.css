@@ -1,8 +1,8 @@
 header h1 {
-    margin: 0 10px 0 0;
-    color: #8b8b8d;
+  margin: 0 10px 0 0;
+  color: #8b8b8d;
 }
 
 .ant-card-actions > li > span:hover {
-    color: #8b8b8d !important;
-  }
+  color: #8b8b8d !important;
+}

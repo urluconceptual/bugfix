@@ -12,6 +12,7 @@ import { EditOutlined } from "@ant-design/icons";
 import { NEON_GREEN_COLOUR } from "../../../models/constants";
 
 const EditProjectForm = observer(({ project }: { project: ProjectData }) => {
+  const [form] = Form.useForm();
   const [formLoading, setFormLoading] = useState<boolean>(false);
   const [formIsOpen, setFormIsOpen] = useState<boolean>(false);
 
@@ -21,6 +22,7 @@ const EditProjectForm = observer(({ project }: { project: ProjectData }) => {
     await projectStore.editInDb({ ...project, ...newProject });
     setFormLoading(false);
     setFormIsOpen(false);
+    form.resetFields();
   };
 
   return (
@@ -38,6 +40,7 @@ const EditProjectForm = observer(({ project }: { project: ProjectData }) => {
       >
         <Spin tip="Saving Project..." spinning={formLoading}>
           <Form
+            form={form}
             name="editProjectForm"
             layout="horizontal"
             labelCol={{ span: 8 }}

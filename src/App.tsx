@@ -67,14 +67,31 @@ function App() {
           Modal: {
             contentBg: DARK_GREY_COLOUR,
             headerBg: DARK_GREY_COLOUR
+          },
+          Table: {
+            colorBgContainer: DARK_GREY_COLOUR,
+            borderColor: TRANSPARENT_GREY_COLOUR
+          },
+          Select: {
+            colorBgElevated: BLACK_COLOUR,
+            colorPrimaryBorder: NEON_GREEN_COLOUR,
+            colorIcon: NEON_GREEN_COLOUR,
+            colorTextDescription: TRANSPARENT_GREY_COLOUR,
+            controlItemBgActive: DARK_GREY_COLOUR,
+            colorText: `${NEON_GREEN_COLOUR} !important`,
+            colorBgContainer: DARK_GREY_COLOUR,
+            colorPrimary: NEON_GREEN_COLOUR
           }
         },
         token: {
           fontFamily: "Sometype Mono",
+          colorPrimaryBorder: NEON_GREEN_COLOUR,
           colorText: LIGHT_GREY_COLOUR,
           colorTextDescription: LIGHT_GREY_COLOUR,
           colorPrimaryHover: NEON_GREEN_COLOUR,
+          colorLinkHover: NEON_GREEN_COLOUR,
           colorError: RED_COLOUR,
+          volcano: RED_COLOUR,
         },
       }}
     >

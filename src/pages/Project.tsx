@@ -6,31 +6,44 @@ import { useEffect, useState } from "react";
 import { userStore } from "../stores/userStore";
 import ProjectsList from "../components/reusable/ProjectsList";
 import { Spin } from "antd";
+import { bugsStore } from "../stores/bugStore";
+import BugsTable from "../components/reusable/BugsTable";
 
 const Project = observer(() => {
   const params = useParams();
   const [projectsLoading, setProjectsLoading] = useState<boolean>(false);
+  const [bugsLoading, setBugsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     setProjectsLoading(true);
     Promise.all([
       projectStore.fetchById(params.projectId!),
-      userStore.fetchAllUsers(),
+      bugsStore.fetchByProject(params.projectId!),
     ]);
   }, []);
 
   useEffect(() => {
-    if (userStore.users) {
-      setProjectsLoading(false);
-    }
-  }, [userStore.users]);
+    setProjectsLoading(false);
+  }, [projectStore.currentViewProjects]);
+
+  useEffect(() => {
+    setBugsLoading(false);
+  }, [bugsStore.currentViewBugs]);
 
   return (
-    <>
-      <Spin tip="Loading project..." spinning={projectsLoading}>
+    <Spin tip="Loading page..." spinning={projectsLoading && bugsLoading}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          rowGap: 10,
+        }}
+      >
         <ProjectsList />
-      </Spin>
-    </>
+        <BugsTable />
+      </div>
+    </Spin>
   );
 });
 

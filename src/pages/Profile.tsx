@@ -1,50 +1,70 @@
 import { Avatar, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { projectStore } from "../stores/projectsStore";
-import { userStore } from "../stores/userStore";
+import { UserObj, userStore } from "../stores/userStore";
 import { observer } from "mobx-react";
 import ProjectsList from "../components/reusable/ProjectsList";
 import { UserOutlined } from "@ant-design/icons";
 import { useParams } from "react-router-dom";
-import { User } from "firebase/auth";
 import AddProjectForm from "../components/custom/ProjectComponents/AddProjectForm";
+import { bugsStore } from "../stores/bugStore";
 
 const Profile = observer(() => {
   const params = useParams();
   const [projectsLoading, setProjectsLoading] = useState<boolean>(false);
-  const [userInView, setUserInView] = useState<User>();
+  const [bugsLoading, setBugsLoading] = useState<boolean>(false);
+  const [userInView, setUserInView] = useState<UserObj | null>();
+  const [proposedBugs, setProposedBugs] = useState<number>(0);
 
   useEffect(() => {
     setProjectsLoading(true);
+    setBugsLoading(true);
+
     Promise.all([
       projectStore.fetchByUser(params.userId!),
-      userStore.fetchAllUsers(),
+      bugsStore.fetchByUser(params.userId!),
+      userStore.fetchById(params.userId!).then((res) => setUserInView(res)),
     ]);
   }, []);
 
   useEffect(() => {
-    if (userStore.users) {
-      setUserInView(userStore.users[params.userId!]);
-      setProjectsLoading(false);
+    const projectIds = projectStore.currentViewProjects.map((item) => item.id!);
+    if (projectIds && projectIds.length > 0) {
+      bugsStore.fetchByProjects(projectIds).then((res) => setProposedBugs(res));
     }
-  }, [userStore.users]);
+    setProjectsLoading(false);
+  }, [projectStore.currentViewProjects]);
 
+  useEffect(() => {
+    setBugsLoading(false);
+  }, [bugsStore.currentViewBugs]);
 
   return (
-    <div style={{ paddingTop: 20 }}>
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", rowGap: 10 }}>
-        <Avatar size={100} icon={<UserOutlined />} />
-        <div>{userInView?.email}</div>
-        <div style={{ display: "flex", justifyContent: "center", columnGap: 10 }}>
-          <span>Projects: {projectStore.currentViewProjects.length}</span>
-          <span>Bugs: 0</span>
+    <Spin tip="Loading page..." spinning={projectsLoading && bugsLoading}>
+      <div style={{ paddingTop: 20 }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            rowGap: 10,
+          }}
+        >
+          <Avatar size={100} icon={<UserOutlined />} />
+          <div>{userInView?.email}</div>
+          <div
+            style={{ display: "flex", justifyContent: "center", columnGap: 10 }}
+          >
+            <span>Projects: {projectStore.currentViewProjects.length}</span>
+            <span>Proposed bugs: {proposedBugs}</span>
+            <span>Reported bugs: {bugsStore.currentViewBugs.length}</span>
+          </div>
         </div>
-      </div>
-      <AddProjectForm userId={params.userId}/>
-      <Spin tip="Loading projects..." spinning={projectsLoading}>
+        <AddProjectForm userId={params.userId} />
+
         <ProjectsList />
-      </Spin>
-    </div>
+      </div>
+    </Spin>
   );
 });
 

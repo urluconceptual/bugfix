@@ -1,56 +1,54 @@
 import { Button, Form, Input, Modal, Spin } from "antd";
 import { observer } from "mobx-react";
-import { ProjectObj, projectStore } from "../../../stores/projectsStore";
 import TextArea from "antd/es/input/TextArea";
 import { useState } from "react";
-import { serverTimestamp } from "firebase/firestore";
-import { userStore } from "../../../stores/userStore";
+import { ProjectData, ProjectObj } from "../../stores/projectsStore";
+import { FormSubmitType } from "../../models/enums";
+import { PROJECT_FORM_LABELS } from "../../models/constants";
 
-const AddProjectForm = observer(
-  ({ userId }: { userId: string | undefined }) => {
+const ProjectForm = observer(
+  ({
+    title,
+    newProject,
+    submitType,
+    submitAction,
+  }: {
+    title: string;
+    newProject: ProjectData;
+    submitType: FormSubmitType;
+    submitAction: (newProject: ProjectObj) => Promise<void>;
+  }) => {
     const [form] = Form.useForm();
     const [formLoading, setFormLoading] = useState<boolean>(false);
-    const [newProjectFormIsOpen, setNewProjectFormIsOpen] =
-      useState<boolean>(false);
-    const isOwnProfile =
-      userId === (userStore.currentUser ? userStore.currentUser!.uid : "");
+    const [formIsOpen, setFormIsOpen] = useState<boolean>(false);
 
-    const handleFinishForm = async (newProject: ProjectObj) => {
+    const formHandler = (newObject: ProjectObj) => {
       setFormLoading(true);
-      newProject.authorId = userId!;
-      newProject.timestamp = serverTimestamp();
-      await projectStore.addToDb(newProject);
       setFormLoading(false);
-      setNewProjectFormIsOpen(false);
+      submitAction(newObject);
+      setFormIsOpen(false);
       form.resetFields();
     };
 
     return (
       <>
-        {isOwnProfile && (
-          <Button
-            onClick={(e) => setNewProjectFormIsOpen((prev) => !prev)}
-            style={{ width: 200 }}
-          >
-            Add new project
-          </Button>
-        )}
         <Modal
           width="650px"
-          title="Add New Project"
-          open={newProjectFormIsOpen}
-          onCancel={() => setNewProjectFormIsOpen(false)}
+          title={PROJECT_FORM_LABELS[submitType]["PROJECT_TITLE"]}
+          open={formIsOpen}
+          onCancel={() => setFormIsOpen(false)}
           footer={null}
         >
-          <Spin tip="Adding project..." spinning={formLoading}>
+          <Spin tip={PROJECT_FORM_LABELS[submitType]["LOADING"]} spinning={formLoading}>
             <Form
               form={form}
-              name="addProjectForm"
+              name={title}
               layout="horizontal"
               labelCol={{ span: 8 }}
               wrapperCol={{ span: 16 }}
               style={{ maxWidth: 600 }}
-              onFinish={handleFinishForm}
+              initialValues={{ ...newProject }}
+              onFinish={formHandler}
               autoComplete="off"
             >
               <Form.Item<ProjectObj>
@@ -116,4 +114,4 @@ const AddProjectForm = observer(
   }
 );
 
-export default AddProjectForm;
+export default ProjectForm;
