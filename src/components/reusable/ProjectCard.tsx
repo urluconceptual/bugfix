@@ -4,6 +4,7 @@ import {
   CodeOutlined,
   EyeOutlined,
   UserOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import {
   EXPLORE_LINK,
@@ -11,7 +12,7 @@ import {
   PROFILE_LINK,
 } from "../../models/constants";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ProjectData } from "../../stores/projectsStore";
+import { ProjectData, projectStore } from "../../stores/projectsStore";
 import { userStore } from "../../stores/userStore";
 import EditProjectForm from "../custom/ProjectComponents/EditProjectForm";
 import AddBugForm from "../custom/BugComponents/AddBugForm";
@@ -19,8 +20,8 @@ import AddBugForm from "../custom/BugComponents/AddBugForm";
 const enum Action {
   seeCode,
   seeProject,
-  reportBug,
   seeAuthor,
+  deleteProject
 }
 
 const ProjectCard = observer(({ project }: { project: ProjectData }) => {
@@ -38,7 +39,8 @@ const ProjectCard = observer(({ project }: { project: ProjectData }) => {
       case Action.seeAuthor:
         navigate(`${PROFILE_LINK}/${project.authorId}`);
         break;
-      case Action.reportBug:
+      case Action.deleteProject:
+        projectStore.deleteFromDb(project);
         break;
     }
   };
@@ -46,10 +48,10 @@ const ProjectCard = observer(({ project }: { project: ProjectData }) => {
   const getAvailableActions = () => {
     let actions = [
       <span onClick={() => handleAction(Action.seeCode, project)}>
-        <CodeOutlined style={{ color: NEON_GREEN_COLOUR }} key="seeCode" />{" "}
-        See repository
+        <CodeOutlined style={{ color: NEON_GREEN_COLOUR }} key="seeCode" /> See
+        repository
       </span>,
-      <AddBugForm project={project}/>,
+      <AddBugForm project={project} />,
     ];
 
     if (location.pathname === `${EXPLORE_LINK}`)
@@ -73,7 +75,16 @@ const ProjectCard = observer(({ project }: { project: ProjectData }) => {
         (userStore.currentUser ? userStore.currentUser!.uid : "") &&
       location.pathname === `${PROFILE_LINK}/${project.authorId}`
     )
-      actions = actions.concat([<EditProjectForm project={project} />]);
+      actions = actions.concat([
+        <EditProjectForm project={project} />,
+        <span onClick={() => handleAction(Action.deleteProject, project)}>
+          <DeleteOutlined
+            style={{ color: NEON_GREEN_COLOUR }}
+            key="deleteProject"
+          />{" "}
+          Delete project
+        </span>,
+      ]);
     return actions;
   };
 

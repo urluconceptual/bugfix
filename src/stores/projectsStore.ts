@@ -2,6 +2,7 @@ import {
   FieldValue,
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -9,6 +10,7 @@ import {
   query,
   updateDoc,
   where,
+  writeBatch,
 } from "firebase/firestore";
 import { makeObservable, observable, action } from "mobx";
 import { db } from "..";
@@ -37,6 +39,9 @@ class ProjectsStore {
       currentViewProjects: observable,
       addToDb: action,
       fetchByUser: action,
+      editInDb: action,
+      fetchById: action,
+      fetchAll: action,
     });
   }
 
@@ -67,6 +72,35 @@ class ProjectsStore {
       });
   };
 
+  deleteBugsFromDb = async (projectId: string) => {
+    const bugsRef = collection(db, "bugs");
+    const q = query(bugsRef, where("projectId", "==", projectId));
+    const querySnapshot = await getDocs(q);
+    const batch = writeBatch(db);
+
+    querySnapshot.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+
+    return batch.commit();
+  };
+
+  deleteFromDb = async (project: ProjectObj) => {
+    const projectRef = doc(db, "projects", project.id!);
+    deleteDoc(projectRef)
+      .then(() => {
+        this.deleteBugsFromDb(project.id!).then(() => {
+          this.fetchByUser(project.authorId).then(() =>
+            message.success("Project successfully deleted!")
+          );
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        message.error("An error occurred while deleting the project.");
+      });
+  };
+
   fetchByUser = async (authorId: string) => {
     const projectsRef = collection(db, "projects");
     const q = query(
@@ -85,7 +119,7 @@ class ProjectsStore {
           return {
             id: doc.id,
             ...projectData,
-            authorEmail: userData.email!
+            authorEmail: userData.email!,
           };
         }))
     );
@@ -100,7 +134,6 @@ class ProjectsStore {
       const userSnap = await getDoc(userRef);
       const userData = userSnap.data() as UserObj;
       runInAction(() => {
-        
         this.currentViewProjects = [
           {
             id: docSnap.id,
@@ -126,12 +159,12 @@ class ProjectsStore {
       return {
         id: docSnap.id,
         ...projectData,
-        authorEmail: userData.email!
+        authorEmail: userData.email!,
       };
     });
-  
+
     const projects = await Promise.all(projectPromises);
-  
+
     runInAction(() => {
       this.currentViewProjects = projects;
     });

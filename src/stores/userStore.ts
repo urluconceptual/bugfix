@@ -27,6 +27,7 @@ export interface UserObj {
 class UserStore {
   users: any = null;
   currentUser: User | null = null;
+  openModal: string | null = null;
 
   constructor() {
     makeObservable(this, {
@@ -38,6 +39,8 @@ class UserStore {
       users: observable,
       setCurrentUser: action,
       fetchAllUsers: action,
+      openModal: observable,
+      setOpenModal: action
     });
   }
 
@@ -132,6 +135,10 @@ class UserStore {
     const docSnap = await getDoc(projectRef);
     return docSnap.exists()? docSnap.data() as UserObj : null;
   };
+
+  setOpenModal = (newState: string | null) => {
+    this.openModal = newState;
+  }
 }
 
 export const userStore = new UserStore();

@@ -5,44 +5,46 @@ import { useState } from "react";
 import { ProjectData, ProjectObj } from "../../stores/projectsStore";
 import { FormSubmitType } from "../../models/enums";
 import { PROJECT_FORM_LABELS } from "../../models/constants";
+import { userStore } from "../../stores/userStore";
 
 const ProjectForm = observer(
   ({
-    title,
+    name,
     newProject,
     submitType,
     submitAction,
   }: {
-    title: string;
-    newProject: ProjectData;
+    name: string;
+    newProject: ProjectData | null;
     submitType: FormSubmitType;
     submitAction: (newProject: ProjectObj) => Promise<void>;
   }) => {
     const [form] = Form.useForm();
     const [formLoading, setFormLoading] = useState<boolean>(false);
-    const [formIsOpen, setFormIsOpen] = useState<boolean>(false);
 
     const formHandler = (newObject: ProjectObj) => {
       setFormLoading(true);
       setFormLoading(false);
       submitAction(newObject);
-      setFormIsOpen(false);
+      userStore.setOpenModal(null);
       form.resetFields();
     };
+
+    console.log(submitType, PROJECT_FORM_LABELS[submitType], PROJECT_FORM_LABELS[submitType]["PROJECT_TITLE"])
 
     return (
       <>
         <Modal
           width="650px"
           title={PROJECT_FORM_LABELS[submitType]["PROJECT_TITLE"]}
-          open={formIsOpen}
-          onCancel={() => setFormIsOpen(false)}
+          open={userStore.openModal === name}
+          onCancel={() => userStore.setOpenModal(null)}
           footer={null}
         >
           <Spin tip={PROJECT_FORM_LABELS[submitType]["LOADING"]} spinning={formLoading}>
             <Form
               form={form}
-              name={title}
+              name={name}
               layout="horizontal"
               labelCol={{ span: 8 }}
               wrapperCol={{ span: 16 }}

@@ -53,11 +53,11 @@ const Profile = observer(() => {
           <Avatar size={100} icon={<UserOutlined />} />
           <div>{userInView?.email}</div>
           <div
-            style={{ display: "flex", justifyContent: "center", columnGap: 10 }}
+            style={{ display: "flex", justifyContent: "center", columnGap: 30 }}
           >
+            <span>Bugs caught by user: {proposedBugs}</span>
             <span>Projects: {projectStore.currentViewProjects.length}</span>
-            <span>Proposed bugs: {proposedBugs}</span>
-            <span>Reported bugs: {bugsStore.currentViewBugs.length}</span>
+            <span>Bugs proposed to user: {bugsStore.currentViewBugs.length}</span>
           </div>
         </div>
         <AddProjectForm userId={params.userId} />
