@@ -15,13 +15,22 @@ import {
   computed,
 } from "mobx";
 import { message } from "antd";
-import { collection, doc, getDoc, getDocs, query, setDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "..";
 
 export interface UserObj {
   id?: string;
   email?: string;
   password?: string;
+  accountIsPrivate?: boolean;
 }
 
 class UserStore {
@@ -40,7 +49,8 @@ class UserStore {
       setCurrentUser: action,
       fetchAllUsers: action,
       openModal: observable,
-      setOpenModal: action
+      setOpenModal: action,
+      changePrivacySettings: action,
     });
   }
 
@@ -130,15 +140,33 @@ class UserStore {
     });
   };
 
-  fetchById = async (userId : string) => {
+  fetchById = async (userId: string) => {
     const projectRef = doc(db, "users", userId);
     const docSnap = await getDoc(projectRef);
-    return docSnap.exists()? docSnap.data() as UserObj : null;
+    return docSnap.exists() ? ({...docSnap.data(), id: userId} as UserObj) : null;
   };
 
   setOpenModal = (newState: string | null) => {
     this.openModal = newState;
-  }
+  };
+
+  changePrivacySettings = async (
+    userId: string,
+    newPrivacySetting: boolean
+  ) => {
+    console.log(userId);
+    const projectRef = doc(db, "users", userId);
+    updateDoc(projectRef, { accountIsPrivate: newPrivacySetting })
+      .then(() => {
+        message.success(
+          `Account is now ${newPrivacySetting ? "private" : "public"}.`
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+        message.error("An error occurred while updating the privacy settings.");
+      });
+  };
 }
 
 export const userStore = new UserStore();

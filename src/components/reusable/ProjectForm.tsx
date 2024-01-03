@@ -30,8 +30,6 @@ const ProjectForm = observer(
       form.resetFields();
     };
 
-    console.log(submitType, PROJECT_FORM_LABELS[submitType], PROJECT_FORM_LABELS[submitType]["PROJECT_TITLE"])
-
     return (
       <>
         <Modal
