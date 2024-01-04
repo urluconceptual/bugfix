@@ -83,7 +83,7 @@ const Welcome = observer(() => {
           />
         </Form.Item>
         <Form.Item>
-          <Button style={{ width: 200 }} htmlType="submit">
+          <Button type="dashed" style={{ width: 200 }} htmlType="submit">
             Done
           </Button>
         </Form.Item>
