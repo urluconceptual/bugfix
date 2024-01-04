@@ -112,7 +112,7 @@ function App() {
             <Route path={`${EXPLORE_LINK}/:projectId`} element={<Project />} />
             <Route element={<PrivateRoute />}>
               <Route path={`${PROFILE_LINK}/:userId`} element={<Profile />} />
-              <Route path={`${MANAGE_PROFILE_LINK}/:userId`} element={<ManageProfile />} />
+              <Route path={`${MANAGE_PROFILE_LINK}`} element={<ManageProfile />} />
             </Route>
             <Route path="*" element={<ErrorPage />} />
           </Route>

@@ -5,6 +5,7 @@ import {
   signOut,
   User,
   onAuthStateChanged,
+  updateEmail,
 } from "firebase/auth";
 import { FirebaseError } from "@firebase/util";
 import {
@@ -139,7 +140,7 @@ class UserStore {
     runInAction(() => {
       this.users = {};
       res.forEach((doc) => {
-        this.users[doc.id] = {...doc.data(), id: doc.id} as UserData;
+        this.users[doc.id] = { ...doc.data(), id: doc.id } as UserData;
       });
     });
   };
@@ -147,7 +148,9 @@ class UserStore {
   fetchById = async (userId: string) => {
     const projectRef = doc(db, "users", userId);
     const docSnap = await getDoc(projectRef);
-    return docSnap.exists() ? ({...docSnap.data(), id: userId} as UserObj) : null;
+    return docSnap.exists()
+      ? ({ ...docSnap.data(), id: userId } as UserObj)
+      : null;
   };
 
   setOpenModal = (newState: string | null) => {
@@ -169,6 +172,34 @@ class UserStore {
       .catch((err) => {
         console.log(err);
         message.error("An error occurred while updating the privacy settings.");
+      });
+  };
+
+  updateUserEmail = async (userId: string, newEmail: string) => {
+    console.log(userId);
+    const projectRef = doc(db, "users", userId);
+    updateDoc(projectRef, { email: newEmail });
+  };
+
+  changeEmail = async (newEmail: string) => {
+    const auth = getAuth();
+    updateEmail(auth.currentUser!, newEmail)
+      .then((res) => {
+        this.updateUserEmail(auth.currentUser?.uid!, newEmail).then(
+          message.success("Your account was successfully updated!")
+        );
+      })
+      .catch((err: FirebaseError) => {
+        switch (err.code) {
+          case "auth/email-already-in-use":
+            message.error(
+              `The email address is already in use by another account.`
+            );
+            break;
+          default:
+            message.error("An error occurred while signing you up.");
+            break;
+        }
       });
   };
 }

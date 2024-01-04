@@ -74,11 +74,8 @@ const Profile = observer(() => {
       <ProfileCard
         user={userInView}
         proposedBugs={proposedBugs}
-        handlePrivacyChange={
-          userStore.currentUser?.uid === userInView?.id
-            ? handlePrivacyChange
-            : undefined
-        }
+        handlePrivacyChange={handlePrivacyChange}
+        isCurrentUserProfile={userStore.currentUser?.uid === userInView?.id}
       />
       <Tabs defaultActiveKey="projects" items={items} />
     </Spin>
