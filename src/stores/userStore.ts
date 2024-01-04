@@ -33,6 +33,10 @@ export interface UserObj {
   accountIsPrivate?: boolean;
 }
 
+export interface UserData extends UserObj {
+  proposedBugs?: number;
+}
+
 class UserStore {
   users: any = null;
   currentUser: User | null = null;
@@ -135,7 +139,7 @@ class UserStore {
     runInAction(() => {
       this.users = {};
       res.forEach((doc) => {
-        this.users[doc.id] = doc.data() as UserObj;
+        this.users[doc.id] = {...doc.data(), id: doc.id} as UserData;
       });
     });
   };

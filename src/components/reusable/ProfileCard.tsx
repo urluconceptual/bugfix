@@ -1,11 +1,11 @@
-import { Avatar } from "antd";
+import { Avatar, Card } from "antd";
 import { observer } from "mobx-react";
 import { UserOutlined, LockOutlined, UnlockOutlined } from "@ant-design/icons";
 import { UserObj } from "../../stores/userStore";
 import { projectStore } from "../../stores/projectsStore";
 import { bugsStore } from "../../stores/bugStore";
 
-const ProfileBanner = observer(
+const ProfileCard = observer(
   ({
     user,
     proposedBugs,
@@ -16,7 +16,7 @@ const ProfileBanner = observer(
     handlePrivacyChange?: () => void;
   }) => {
     return (
-      <div style={{ paddingTop: 20 }}>
+      <Card style={{ padding: 10, margin: '10px 0px 10px 0px' }}>
         <div
           style={{
             display: "flex",
@@ -31,6 +31,7 @@ const ProfileBanner = observer(
               <span
                 title="Click icon to switch between private & public acount."
                 onClick={handlePrivacyChange!}
+                style={{ cursor: "pointer" }}
               >
                 {user?.accountIsPrivate ? <LockOutlined /> : <UnlockOutlined />}
               </span>
@@ -47,9 +48,9 @@ const ProfileBanner = observer(
             </span>
           </div>
         </div>
-      </div>
+      </Card>
     );
   }
 );
 
-export default ProfileBanner;
+export default ProfileCard;

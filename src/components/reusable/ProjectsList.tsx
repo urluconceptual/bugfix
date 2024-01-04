@@ -27,13 +27,16 @@ const ProjectsList = observer(() => {
   return (
     <div>
       {dataSource.length > 1 && (
-        <Search
-          placeholder="Search..."
-          onSearch={(input) => setSearchValue(input)}
-          style={{ width: 300, paddingTop: 20, paddingBottom: 20 }}
-        />
+        <>
+          <Search
+            placeholder="Search..."
+            onSearch={(input) => setSearchValue(input)}
+            style={{ width: 300, paddingTop: 20, paddingBottom: 20 }}
+          />
+          <div> {filteredDataSource.length} results</div>
+        </>
       )}
-      <div>{filteredDataSource.length} results</div>
+
       <List
         itemLayout="vertical"
         size="large"

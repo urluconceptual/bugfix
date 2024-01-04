@@ -6,9 +6,12 @@ import { ColumnsType } from "antd/es/table";
 import { serverTimestamp } from "firebase/firestore";
 import { userStore } from "../../stores/userStore";
 import { projectStore } from "../../stores/projectsStore";
+import { useLocation } from "react-router-dom";
+import { PROFILE_LINK } from "../../models/constants";
 
 const BugsTable = observer(() => {
   const [dataSource, setDataSource] = useState<BugData[]>([]);
+  const location = useLocation();
 
   useEffect(() => {
     setDataSource(bugsStore.currentViewBugs);
@@ -29,7 +32,11 @@ const BugsTable = observer(() => {
       dataIndex: "description",
       key: "description",
     },
-    {
+    location.pathname.includes(`${PROFILE_LINK}`)? {
+      title: "Project Title",
+      dataIndex: "projectTitle",
+      key: "projectTitle",
+    } : {
       title: "Proposed by",
       dataIndex: "proposedByEmail",
       key: "proposedByEmail",

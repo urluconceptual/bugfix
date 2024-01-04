@@ -10,7 +10,7 @@ import { bugsStore } from "../stores/bugStore";
 import ProfileCard from "../components/reusable/ProfileCard";
 import BugsTable from "../components/reusable/BugsTable";
 
-const Profile = observer(() => {
+const ManageProfile = observer(() => {
   const params = useParams();
   const [projectsLoading, setProjectsLoading] = useState<boolean>(false);
   const [bugsLoading, setBugsLoading] = useState<boolean>(false);
@@ -85,4 +85,4 @@ const Profile = observer(() => {
   );
 });
 
-export default Profile;
+export default ManageProfile;

@@ -8,13 +8,14 @@ import {
 import Welcome from "./pages/Welcome";
 import RootLayout from "./pages/Root/Root";
 import ErrorPage from "./pages/Error";
-import Profiles from "./pages/Profile";
+import Profile from "./pages/Profile";
 import { ConfigProvider } from "antd";
 import {
   BLACK_COLOUR,
   DARK_GREY_COLOUR,
   EXPLORE_LINK,
   LIGHT_GREY_COLOUR,
+  MANAGE_PROFILE_LINK,
   NEON_GREEN_COLOUR,
   PROFILE_LINK,
   RED_COLOUR,
@@ -25,6 +26,8 @@ import { userStore } from "./stores/userStore";
 import { useEffect } from "react";
 import Explore from "./pages/Explore";
 import Project from "./pages/Project";
+import PrivateRoute from "./utils/PrivateRoute";
+import ManageProfile from "./pages/ManageProfile";
 
 function App() {
   useEffect(() => {
@@ -37,7 +40,7 @@ function App() {
         components: {
           Layout: {
             colorBgLayout: BLACK_COLOUR,
-            headerBg: DARK_GREY_COLOUR
+            headerBg: DARK_GREY_COLOUR,
           },
           Menu: {
             colorBgContainer: DARK_GREY_COLOUR,
@@ -46,7 +49,7 @@ function App() {
             horizontalItemSelectedColor: NEON_GREEN_COLOUR,
           },
           Button: {
-            colorBgContainer: BLACK_COLOUR
+            colorBgContainer: BLACK_COLOUR,
           },
           Input: {
             colorBgContainer: BLACK_COLOUR,
@@ -58,7 +61,7 @@ function App() {
           },
           Pagination: {
             colorBgContainer: BLACK_COLOUR,
-            colorPrimary: TRANSPARENT_GREY_COLOUR
+            colorPrimary: TRANSPARENT_GREY_COLOUR,
           },
           Spin: {
             colorPrimary: NEON_GREEN_COLOUR,
@@ -66,11 +69,11 @@ function App() {
           },
           Modal: {
             contentBg: DARK_GREY_COLOUR,
-            headerBg: DARK_GREY_COLOUR
+            headerBg: DARK_GREY_COLOUR,
           },
           Table: {
             colorBgContainer: DARK_GREY_COLOUR,
-            borderColor: TRANSPARENT_GREY_COLOUR
+            borderColor: TRANSPARENT_GREY_COLOUR,
           },
           Select: {
             colorBgElevated: BLACK_COLOUR,
@@ -80,8 +83,13 @@ function App() {
             controlItemBgActive: DARK_GREY_COLOUR,
             colorText: `${NEON_GREEN_COLOUR} !important`,
             colorBgContainer: DARK_GREY_COLOUR,
-            colorPrimary: NEON_GREEN_COLOUR
-          }
+            colorPrimary: NEON_GREEN_COLOUR,
+          },
+          Tabs: {
+            itemHoverColor: NEON_GREEN_COLOUR,
+            itemSelectedColor: NEON_GREEN_COLOUR,
+            inkBarColor: NEON_GREEN_COLOUR,
+          },
         },
         token: {
           fontFamily: "Sometype Mono",
@@ -102,7 +110,10 @@ function App() {
             <Route path={WELCOME_LINK} element={<Welcome />} />
             <Route path={EXPLORE_LINK} element={<Explore />} />
             <Route path={`${EXPLORE_LINK}/:projectId`} element={<Project />} />
-            <Route path={`${PROFILE_LINK}/:userId`} element={<Profiles />} />
+            <Route element={<PrivateRoute />}>
+              <Route path={`${PROFILE_LINK}/:userId`} element={<Profile />} />
+              <Route path={`${MANAGE_PROFILE_LINK}/:userId`} element={<ManageProfile />} />
+            </Route>
             <Route path="*" element={<ErrorPage />} />
           </Route>
         </Routes>

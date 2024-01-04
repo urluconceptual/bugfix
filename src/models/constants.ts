@@ -1,5 +1,6 @@
 export const EXPLORE_LINK = "/projects";
 export const PROFILE_LINK = "/profiles";
+export const MANAGE_PROFILE_LINK = "/manage-profile";
 export const WELCOME_LINK = "/welcome";
 
 export const BLACK_COLOUR = "#0d0d0d";
