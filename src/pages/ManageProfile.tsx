@@ -8,9 +8,9 @@ import {
   EyeInvisibleOutlined,
 } from "@ant-design/icons";
 import { LIGHT_GREY_COLOUR } from "../models/constants";
+import { userStore } from "../stores/userStore";
 
 const enum Action {
-  changeEmail,
   changePassword,
 }
 
@@ -21,42 +21,20 @@ const ManageProfile = observer(() => {
     setActiveAction(activeAction !== selectedAction ? selectedAction : null);
   };
 
+  const handleFinishForm = (input: {
+    newEmail?: string;
+    password: string;
+    newPassword?: string;
+  }) => {
+    switch (activeAction) {
+      case Action.changePassword:
+        userStore.changePassword(input.password, input.newPassword!);
+        break;
+    }
+  };
+
   const renderForm = () => {
     switch (activeAction) {
-      case Action.changeEmail:
-        return (
-          <Form
-            name="manageProfileForm"
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
-            style={{
-              maxWidth: 600,
-            }}
-            autoComplete="off"
-          >
-            <Form.Item<string>
-              name="email"
-              rules={[
-                { required: true, message: "Please input your email." },
-                {
-                  type: "email",
-                  message: "Please provide a valid email address.",
-                },
-              ]}
-            >
-              <Input
-                style={{ width: 400 }}
-                placeholder="email"
-                prefix={<UserOutlined />}
-              />
-            </Form.Item>
-            <Form.Item>
-              <Button type="dashed" style={{ width: 400 }} htmlType="submit">
-                Done
-              </Button>
-            </Form.Item>
-          </Form>
-        );
       case Action.changePassword:
         return (
           <Form
@@ -67,16 +45,38 @@ const ManageProfile = observer(() => {
               maxWidth: 600,
             }}
             autoComplete="off"
+            onFinish={handleFinishForm}
           >
             <Form.Item<string>
               name="password"
               rules={[
-                { required: true, message: "Please input your password." },
+                { required: true, message: "Please confirm your password." },
               ]}
             >
               <Input.Password
                 style={{ width: 400 }}
-                placeholder="password"
+                placeholder="current password"
+                prefix={<KeyOutlined />}
+                iconRender={(visible) =>
+                  visible ? (
+                    <EyeOutlined style={{ color: LIGHT_GREY_COLOUR }} />
+                  ) : (
+                    <EyeInvisibleOutlined
+                      style={{ color: LIGHT_GREY_COLOUR }}
+                    />
+                  )
+                }
+              />
+            </Form.Item>
+            <Form.Item<string>
+              name="newPassword"
+              rules={[
+                { required: true, message: "Please input your new password." },
+              ]}
+            >
+              <Input.Password
+                style={{ width: 400 }}
+                placeholder="new password"
                 prefix={<KeyOutlined />}
                 iconRender={(visible) =>
                   visible ? (
@@ -108,15 +108,6 @@ const ManageProfile = observer(() => {
         rowGap: activeAction === null ? 50 : 20,
       }}
     >
-      {(activeAction === Action.changeEmail || activeAction === null) && (
-        <Button
-          style={{ width: 400 }}
-          onClick={() => handleActionClick(Action.changeEmail)}
-        >
-          Change my email
-        </Button>
-      )}
-      {activeAction === Action.changeEmail && renderForm()}
       {(activeAction === Action.changePassword || activeAction === null) && (
         <Button
           style={{ width: 400 }}

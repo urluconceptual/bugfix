@@ -25,6 +25,26 @@ const ErrorPage = () => {
           />
         </div>
       );
+    case "/route-not-available":
+      return (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Result
+            status="warning"
+            title="Log in to access this page."
+            extra={
+              <Button>
+                <Link to="/welcome">Back Home</Link>
+              </Button>
+            }
+          />
+        </div>
+      );
     default:
       return (
         <div

@@ -6,6 +6,9 @@ import {
   User,
   onAuthStateChanged,
   updateEmail,
+  updatePassword,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
 } from "firebase/auth";
 import { FirebaseError } from "@firebase/util";
 import {
@@ -161,7 +164,6 @@ class UserStore {
     userId: string,
     newPrivacySetting: boolean
   ) => {
-    console.log(userId);
     const projectRef = doc(db, "users", userId);
     updateDoc(projectRef, { accountIsPrivate: newPrivacySetting })
       .then(() => {
@@ -176,30 +178,42 @@ class UserStore {
   };
 
   updateUserEmail = async (userId: string, newEmail: string) => {
-    console.log(userId);
     const projectRef = doc(db, "users", userId);
     updateDoc(projectRef, { email: newEmail });
   };
 
-  changeEmail = async (newEmail: string) => {
+  reauthenticateUser = async (password: string) => {
     const auth = getAuth();
-    updateEmail(auth.currentUser!, newEmail)
+    const user = auth.currentUser!;
+    const credential = EmailAuthProvider.credential(user.email!, password);
+    let success = false;
+
+    try {
+      await reauthenticateWithCredential(user, credential);
+      success = true;
+    } catch (err: unknown) {
+      const firebaseErr = err as FirebaseError;
+      switch (firebaseErr.code) {
+        case "auth/invalid-credential":
+          message.error(`Incorrect email or password.`);
+          break;
+        default:
+          message.error("An error occurred while updating your email.");
+          break;
+      }
+    }
+
+    return success;
+  };
+
+  changePassword = async (oldPassword: string, newPassword: string) => {
+    const auth = getAuth();
+    updatePassword(auth.currentUser!, newPassword)
       .then((res) => {
-        this.updateUserEmail(auth.currentUser?.uid!, newEmail).then(
-          message.success("Your account was successfully updated!")
-        );
+        message.success("Your password was successfully updated!");
       })
       .catch((err: FirebaseError) => {
-        switch (err.code) {
-          case "auth/email-already-in-use":
-            message.error(
-              `The email address is already in use by another account.`
-            );
-            break;
-          default:
-            message.error("An error occurred while signing you up.");
-            break;
-        }
+        message.error("An error occurred while updating your password.");
       });
   };
 }
