@@ -17,7 +17,7 @@ const PrivateRoute = observer(() => {
       if (location.pathname.includes(`${PROFILE_LINK}`)) {
         const res = await userStore.fetchById(params.userId!);
         if (res && res.accountIsPrivate) {
-          setIsAllowed(res.id === userStore.currentUser!.uid);
+          setIsAllowed(userStore.currentUser !== null && res.id === userStore.currentUser!.uid);
           setNavigateToRoute("/private-profile");
         } else setIsAllowed(true);
       }

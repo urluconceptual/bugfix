@@ -46,7 +46,7 @@ const AddBugForm = observer(({ project }: { project: ProjectData }) => {
       >
         <Spin tip="Saving bug..." spinning={formLoading}>
           <Form
-          form={form}
+            form={form}
             name="addBugForm"
             layout="horizontal"
             labelCol={{ span: 8 }}
