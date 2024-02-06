@@ -5,7 +5,7 @@ import reportWebVitals from './reportWebVitals';
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore"
 import App from './App';
-import { firebaseConfig } from './firebasecConfig';
+import { firebaseConfig } from './firebaseConfig';
 
 // Initialize Firebase
 initializeApp(firebaseConfig);

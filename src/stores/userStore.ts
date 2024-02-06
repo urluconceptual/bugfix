@@ -5,7 +5,6 @@ import {
   signOut,
   User,
   onAuthStateChanged,
-  updateEmail,
   updatePassword,
   EmailAuthProvider,
   reauthenticateWithCredential,
