@@ -1,46 +1,23 @@
-# Getting Started with Create React App
+# :bug: bugfix
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Bug tracking React app implemented for the Advanced Front End course.
+This is a simple single-page application, using React, Mobx, and Firebase, that allows both registered and anonymous users to report bugs in certain projects and view reported bugs, as well as update their status.
 
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Overview
+* Routing  
+    - Used React Router to create static and dynamic routes.
+    - The layout of the page is consistent throughout the pages, using an outlet to render the content of the page depending on the route.
+    - The dynamic pages use the project/user ID params to fetch data for the specific ID.
+    - Unavailable routes are handled with an error page.
+* Public & private routes  
+    - The private routes are protected by an additional component, that checks if the user can access the page and, if they can, renders the requested page, otherwise, it renders the specific error page.
+    - The private routes are the profile pages of the user that opted for a private profile(can only be accessed by the owner), and the account management page(can only be accessed by authenticated users).
+* Component communication
+    - Components communicate through props when the data has to be visible to a few components.
+    - Data is passed using stores when it has to be visible globally. I used Mobx for this kind of state management, as it is easy to set up and easy to use to use for small projects.
+    - Data is also passed through the route parameters for the dynamic routes.
+* Reusable components
+    - Used Ant Design components with custom configurations for a professional-looking UI, as it has vast options for components, good documentation, and flexible configurations.
+    - Created own reusable components for repeating elements, such as forms, tables, and cards.
+* Backend
+    - As the backend needs are simplistic and not the main focus of the app, I used Firebase for fast development.
