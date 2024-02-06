@@ -1,9 +1,7 @@
 import { observer } from "mobx-react";
-
 import { useParams } from "react-router-dom";
 import { projectStore } from "../stores/projectsStore";
 import { useEffect, useState } from "react";
-import { userStore } from "../stores/userStore";
 import ProjectsList from "../components/reusable/ProjectsList";
 import { Spin } from "antd";
 import { bugsStore } from "../stores/bugStore";
